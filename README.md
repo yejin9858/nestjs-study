@@ -1,73 +1,105 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+### Spring과 코드 비교
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+  
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+모듈 하나 하나가 스프링에선 User관련 코드, Post 관련 코드를 분리해놓은 느낌이다.
 
-## Description
+  
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+Spring 의 controller와 모양이 비슷하다.
 
-## Installation
+```
+import { Controller, Get } from '@nestjs/common';
 
-```bash
-$ npm install
+import { AppService } from './app.service';
+
+  
+
+@Controller()
+
+export class AppController {
+
+constructor(private readonly appService: AppService) {}
+
+  
+
+@Get()// "/"생략
+
+getHello(): string {
+
+return this.appService.getHello();
+
+}
+
+}
 ```
 
-## Running the app
+  
 
-```bash
-# development
-$ npm run start
+module에서 코드들을 등록하는 듯. (빈 등록, config 코드 느낌?)
 
-# watch mode
-$ npm run start:dev
+```
+import { Module } from '@nestjs/common';
 
-# production mode
-$ npm run start:prod
+import { AppController } from './app.controller';
+
+import { AppService } from './app.service';
+
+  
+
+@Module({
+
+imports: [],
+
+controllers: [AppController],
+
+providers: [AppService], //등록이 되어있음
+
+})
+
+export class AppModule {}
 ```
 
-## Test
+  
 
-```bash
-# unit tests
-$ npm run test
+Appication.java 재질
 
-# e2e tests
-$ npm run test:e2e
+```
+import { NestFactory } from '@nestjs/core';
 
-# test coverage
-$ npm run test:cov
+import { AppModule } from './app.module';
+
+  
+
+async function bootstrap() {
+
+//앱 시작, 어플리케이션 생성, 5000번 포트에서 앱 모듈을 실행한다.
+
+const app = await NestFactory.create(AppModule);
+
+await app.listen(5000);
+
+}
+
+bootstrap();
 ```
 
-## Support
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+### 프로젝트 초기화와 모듈 생성
 
-## Stay in touch
+- Contoller 생성
+nestjs는 모듈 생성을 주로 명령어로 함
+`nest g controller boards --no-spec`
+이 안되면 [여기](https://hellcoding.tistory.com/entry/VSCode-%EC%98%A4%EB%A5%98-%EC%9D%B4-%EC%8B%9C%EC%8A%A4%ED%85%9C%EC%97%90%EC%84%9C-%EC%8A%A4%ED%81%AC%EB%A6%BD%ED%8A%B8%EB%A5%BC-%EC%8B%A4%ED%96%89%ED%95%A0-%EC%88%98-%EC%97%86%EC%9C%BC%EB%AF%80%EB%A1%9C) 참조
+-> appmodule에 자동 추가, boards.controller.ts 생김
+애노테이션을 데코레이터라고 말한다.
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+Provider - 종속성으로 주입
+Controller <- Service
 
-## License
+- Service 생성
+`nest g service boards --no-spec`
 
-Nest is [MIT licensed](LICENSE).
+private를 매개변수 안에 선언함 -> class 내부에서만 사용
+
+
