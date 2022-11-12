@@ -103,3 +103,8 @@ Controller <- Service
 private를 매개변수 안에 선언함 -> class 내부에서만 사용
 
 
+### CRUD
+- model 생성 : Spring의 entity
++ type정의 : kotiln처럼 return type을 정의해줄 수 있음. 이해가 쉽고 에러방지에 좋음
+
+
