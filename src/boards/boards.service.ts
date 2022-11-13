@@ -1,47 +1,59 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Board, BoardStatus } from './board.model';
+import { BoardStatus } from './board-status.enum';
 import {v1 as uuid} from 'uuid';
 import { CreateBoardDto } from './dto/create-board.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { BoardRepository } from './board.repository';
+import { Board } from './board.entity';
 
 @Injectable()
 export class BoardsService {
-    private boards: Board[] = []; //private로 안하면 다른 코드에서 수정할 수 있게 됨
     
-    getAllBoards(): Board[]{
-        return this.boards;
+    constructor(
+        @InjectRepository(BoardRepository)
+        private boardRepository: BoardRepository,
+    ) { }
+    
+    async getAllBoards(): Promise<Board[]>{
+        return this.boardRepository.find();
     }
 
-    createBoard(createBoardDto : CreateBoardDto){
+    async createBoard(createBoardDto : CreateBoardDto) : Promise<Board> {
         const{title, description} = createBoardDto;
-        const board : Board= {
-            id : uuid(),
+
+        const board = this.boardRepository.create({
             title,
             description,
             status : BoardStatus.PUBLIC
-        }
+        })
 
-        this.boards.push(board);
+        await this.boardRepository.save(board);
         return board;
     }
 
-    getBoardById(id : string) : Board {
-        const found = this.boards.find(board => board.id === id);
+    async getBoardById(id: number) : Promise<Board> {
+        const found = await this.boardRepository.findOne({where: { id }}); //await를 씀으로써 다 찾을 때까지 기다림, 잘못된 값 받기 방지
 
         if(!found){
             throw new NotFoundException(`Can't find board id ${id}`);
         }
-        return this.boards.find((board) => board.id === id)
+        return found;
     }
 
-    deleteBoard(id : string) : void {
-        const found = this.getBoardById(id);
-        this.boards = this.boards.filter((board) => board.id !== id);
-        
+    async deleteBoard(id : number) : Promise<void> {
+        const result = await this.boardRepository.delete(id);
+
+        if(result.affected === 0){
+            throw new NotFoundException(`Can't find board id ${id}`);
+        }
     }
 
-    updateBoardStatus(id:string, status : BoardStatus) : Board {
-        const board = this.getBoardById(id);
+    async updateBoardStatus(id:number, status : BoardStatus) : Promise<Board> {
+        const board = await this.getBoardById(id);
+
         board.status = status;
+        await this.boardRepository.save(board);
+
         return board;
     }
 }
