@@ -120,5 +120,7 @@ private를 매개변수 안에 선언함 -> class 내부에서만 사용
         main.ts에 선언하는 파이프
     - Build-in Pipes
         기본으로 제공되는 파이프
+    - Custom Pipes
+        커스텀 파이프 ex)board-ststus-validation.pipe.ts
 
 
