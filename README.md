@@ -1,11 +1,9 @@
+## Nest.js 강의 & 실습 정리
+[NestJS 기본 강의](https://youtube.com/playlist?list=PL9a7QRYt5fqnCYYs9YfcBXcWuDnAnQ5sI) 듣고 정리
+
 ### Spring과 코드 비교
 
-  
-
 모듈 하나 하나가 스프링에선 User관련 코드, Post 관련 코드를 분리해놓은 느낌이다.
-
-  
-
 Spring 의 controller와 모양이 비슷하다.
 
 ```
@@ -102,6 +100,9 @@ Controller <- Service
 
 private를 매개변수 안에 선언함 -> class 내부에서만 사용
 
+-실행
+`npm run start:dev`
+
 
 ### CRUD
 - model 생성 : Spring의 entity
@@ -123,4 +124,15 @@ private를 매개변수 안에 선언함 -> class 내부에서만 사용
     - Custom Pipes
         커스텀 파이프 ex)board-ststus-validation.pipe.ts
 
+## Postgres SQL
+create - server register - server로 옮겨감 한참 찾았네...
 
+## TypeORM
+- Spring의 JPA와 같다
+- [메소드](https://typeorm.io/repository-api) 참고
+- findOne(id)가 먹지 않는 문제가 있었다. findOne({where: { id }})로 수정하면서 해결, 버전문제라고 한다. [thanks to](https://stackoverflow.com/questions/71548592/nest-js-typeorm-cannot-use-findone-properly)
+    -> 그냥 처음부터 downgrade하는 것이 현명했음, 결국 다른 곳에서 오류 또 터짐
+    `npm install @nestjs/typeorm@8.0.4`
+    `npm install typeorm@0.2.34` 로 다운그레이드를 하자...
+- remove() vs delete()
+    remove는 없는 아이템 삭제시 오류 발생, delete는 그렇지 않음
