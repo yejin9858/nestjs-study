@@ -108,4 +108,19 @@ private를 매개변수 안에 선언함 -> class 내부에서만 사용
 + type정의 : kotiln처럼 return type을 정의해줄 수 있음. 이해가 쉽고 에러방지에 좋음
 - Spring과 마찬가지로 dto를 사용한다. 이유와 쓰임새는 같다.
 
+## PIPE
+- @Injectable() 데코레이터로 주석이 달린 클래스
+- data transformation, data validation을 위해 사용함
+- Pipe의 종류
+    - Handler-level Pipes
+        controller에서 사용
+    - Parameter-level Pipes
+        파라미터에만 적용됨
+    - Global Pipes
+        main.ts에 선언하는 파이프
+    - Build-in Pipes
+        기본으로 제공되는 파이프
+    - Custom Pipes
+        커스텀 파이프 ex)board-ststus-validation.pipe.ts
+
 
